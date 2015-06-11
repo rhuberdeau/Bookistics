@@ -30,6 +30,10 @@ class BooksController < ApplicationController
         add_book_to_current_user(@book = Book.new(amazon_book.attributes)) unless amazon_book.nil?
       end
     end
+
+    respond_to do |format|
+      format.js
+    end
   end
 
   def show

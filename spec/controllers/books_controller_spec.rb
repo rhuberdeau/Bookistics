@@ -1,0 +1,72 @@
+require "rails_helper"
+
+describe BooksController do 
+	context "when there is an ASIN" do 
+		context "when the book is in the database" do 
+			let(:asin) { 'something' }
+			let(:user) { User.create! }
+			let!(:book) do 
+				Book.create!(:asin => asin,
+										 :title => "a title",
+										 :authors => "Fred Smith",
+										 :details_url => "http://www.example.com/a-title")
+			end
+			before { allow(controller).to receive(:current_user) { user } }
+
+			context "when the user does not have the book" do 
+				it "adds the book to the user" do 
+					post :create, :id => asin
+					expect(user.books).to eql [book]
+				end
+			end
+
+			context "when the user already has the book" do 
+				it "does not add the book to the user" do 
+					user.books << book
+					post :create, :id => asin
+					expect(user.books).to eql [book]
+				end
+			end
+
+		end
+		context "when the book is not in the database" do 
+			let(:asin) { 'something' }
+			let(:user) { User.create! }
+			let!(:book_attributes) do 
+				{:asin => asin,
+				 :title => "a title",
+				 :authors => "Fred Smith",
+				 :details_url => "http://www.example.com/a-title"}
+			end
+			before { allow(controller).to receive(:current_user) { user } }
+
+			context "when the book is in amazon" do 
+				it "adds the book to the user" do 
+					amazon_book = double
+					amazon_book.stub(:attributes) {book_attributes}
+					allow(AmazonBook).to receive(:find_by_asin).with(asin) {amazon_book}
+					post :create, :id => asin 
+					expect(user.books.count).to eql 1
+					expect(user.books.first.title).to eql "a title"
+				end
+			end
+
+			context "when the book is not in amazon" do 
+				it "does not add the book to the user" do 
+					allow(Book).to receive(:find_by_asin).with(asin) { nil }
+					allow(AmazonBook).to receive(:find_by_asin).with(asin) { nil }
+					post :create, :id => asin
+					expect(user.books).to be_empty
+				end
+			end
+		end
+	end
+	context "when there is not an ASIN" do 
+		let(:user) { User.create! }
+		
+		it "does not add the book to the user" do 
+			post :create, :id => nil
+			expect(user.books).to be_empty
+		end
+	end
+end

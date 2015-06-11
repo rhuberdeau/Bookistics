@@ -10,3 +10,7 @@ gem 'oa-oauth'
 gem 'chronic'
 gem 'stamp'
 gem 'will_paginate'
+
+group :development, :test do
+  gem 'rspec-rails', '~> 3.0'
+end
