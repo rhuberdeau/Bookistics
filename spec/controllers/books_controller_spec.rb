@@ -1,10 +1,12 @@
 require "rails_helper"
 
 describe BooksController do 
+	let(:user) { User.create! }
+
 	context "when there is an ASIN" do 
+		let(:asin) { 'something' }
+		
 		context "when the book is in the database" do 
-			let(:asin) { 'something' }
-			let(:user) { User.create! }
 			let!(:book) do 
 				Book.create!(:asin => asin,
 										 :title => "a title",
@@ -30,8 +32,6 @@ describe BooksController do
 
 		end
 		context "when the book is not in the database" do 
-			let(:asin) { 'something' }
-			let(:user) { User.create! }
 			let!(:book_attributes) do 
 				{:asin => asin,
 				 :title => "a title",
@@ -62,8 +62,6 @@ describe BooksController do
 		end
 	end
 	context "when there is not an ASIN" do 
-		let(:user) { User.create! }
-		
 		it "does not add the book to the user" do 
 			post :create, :id => nil
 			expect(user.books).to be_empty
