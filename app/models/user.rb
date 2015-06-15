@@ -40,4 +40,11 @@ class User < ActiveRecord::Base
       self.where('nickname = ?', param).exists?
     end
   end
+
+  def add_book (book)
+    unless self.has_book? book.asin
+      self.books << book
+      self.save! 
+    end
+  end
 end

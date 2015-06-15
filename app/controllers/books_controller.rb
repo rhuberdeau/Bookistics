@@ -22,16 +22,14 @@ class BooksController < ApplicationController
     if @asin.present?
       @book = Book.find_by_asin(@asin)
 
-      if @book.present?
-        unless current_user.has_book? @book.asin
-          add_book_to_current_user(@book) 
-        end
-      else
+      unless @book.present?      
         amazon_book = AmazonBook.find_by_asin(@asin)
         if amazon_book.present?
           @book = Book.new(amazon_book.attributes)
-          add_book_to_current_user(@book)
         end
+      end
+      if @book.present?
+        current_user.add_book(@book) 
       end
     end
 
@@ -103,10 +101,5 @@ class BooksController < ApplicationController
     if current_user.nil? or !current_user.has_book?(params[:id])
       redirect_to_root_with_error("Sorry but you don't seem to have that book!")
     end
-  end
-
-  def add_book_to_current_user (book)
-    current_user.books << book
-    current_user.save!
   end
 end
