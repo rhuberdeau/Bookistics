@@ -20,14 +20,8 @@ class BooksController < ApplicationController
     @asin = params[:id]
 
     if @asin.present?
-      @book = Book.find_by_asin(@asin)
+      @book = FindsBook.find_book(@asin)
 
-      unless @book.present?      
-        amazon_book = AmazonBook.find_by_asin(@asin)
-        if amazon_book.present?
-          @book = Book.new(amazon_book.attributes)
-        end
-      end
       if @book.present?
         current_user.add_book(@book) 
       end

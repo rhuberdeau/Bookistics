@@ -32,7 +32,7 @@ describe BooksController do
 			context "when the book is in amazon" do 
 				it "adds the book to the user" do 
 					amazon_book = double
-					amazon_book.stub(:attributes) {book_attributes}
+					allow(amazon_book).to receive(:attributes) {book_attributes}
 					allow(AmazonBook).to receive(:find_by_asin).with(asin) {amazon_book}
 					post :create, :id => asin 
 					expect(user.books.count).to eql 1

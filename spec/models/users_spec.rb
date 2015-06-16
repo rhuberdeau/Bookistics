@@ -4,7 +4,7 @@ describe User do
   context "#add_book" do
   	let(:asin) { 'something' } 
   	let(:user) { User.create! }
-  	let!(:book) do 
+  	let(:book) do 
   		Book.create!(:asin => asin,
   								 :title => "a title",
   								 :authors => "Fred Smith",
