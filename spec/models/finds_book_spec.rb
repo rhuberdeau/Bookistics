@@ -25,12 +25,11 @@ describe FindsBook do
 
 			context "when the book is in amazon" do 
 				it "it returns the book from amazon" do 
-					allow(Book).to receive(:find_by_asin).with(asin) {nil}
-					amazon_book = double
 					book 				= double
-					allow(amazon_book).to receive(:attributes) {book_attributes}
+					amazon_book = double
+					allow(Book).to receive(:find_by_asin).with(asin) {nil}
 					allow(AmazonBook).to receive(:find_by_asin).with(asin) {amazon_book}
-					allow(Book).to receive(:new).with(amazon_book.attributes) {book}
+					allow(amazon_book).to receive(:create_book) {book}
 					expect(FindsBook.find_book(asin)).to eql book
 				end
 			end

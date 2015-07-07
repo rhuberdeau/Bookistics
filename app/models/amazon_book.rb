@@ -26,6 +26,14 @@ class AmazonBook
     Hash[*ATTRIBUTES_LIST.collect { |attrb| [attrb.to_s, send(attrb)] }.flatten]
   end
 
+  def create_book
+    book = Book.new(attributes)
+    if book.valid?
+      book.save!
+    end
+    book
+  end
+
   class << self
     def debug_search (keywords)
       results = ASIN::Client.instance.search(:Keywords      => keywords,

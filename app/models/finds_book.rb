@@ -4,7 +4,7 @@ class FindsBook
 		unless book.present?      
 		  amazon_book = AmazonBook.find_by_asin(asin)
 		  if amazon_book.present?
-		    book = Book.new(amazon_book.attributes)
+		    book = amazon_book.create_book
 		  end
 		end
 		book
